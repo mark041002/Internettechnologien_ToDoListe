@@ -1,64 +1,39 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/todos';
-const MONGO_DB = process.env.MONGO_DB || 'todos';
+const url = 'mongodb://localhost:27017/todos';
+const dbName = 'todos';
 
 let db = null;
 let collection = null;
 export default class DB {
-    connect() {
-        return MongoClient.connect(MONGO_URI)
+    async connect() {
+        return MongoClient.connect(url)
             .then(function (client) {
-                db = client.db(MONGO_DB);
+                db = client.db(dbName);
                 collection = db.collection('todos');
             })
     }
 
+    // Lesen aller ToDos (GET)
     queryAll() {
-        return collection.find().toArray();
+        return collection.find().toArray()
     }
-
-    queryById(id) {
-        // TODO: Implement queryById
-        return collection.findOne({_id: id})
-        .then(result => {
-            if (result) {
-                return result;
-            } else {
-                return null;
-            }
-        })
+    // Lesen eines einzelnen ToDos (GET)
+    async queryById(id) {
+        return await collection.findOne({_id: id});
     }
-
-    update(id, order) {
-        // TODO: Implement update
-        return collection.updateOne({_id: id}, {$set: order})
-        .then(result => {
-            if (result.modifiedCount === 1) {
-                return true;
-            } else {
-                return false;
-            }
-        })
+    // Aktualisieren eines ToDos (PUT)
+    update(id, todo) {
+        let test = new ObjectId(id);
+        collection.updateOne({_id: id}, {$set: todo}); 
+        return Promise.resolve();
     }
-
+    // Löschen eines ToDos (DELETE)
     delete(id) {
-        // TODO: Implement delete
-        return collection.deleteOne({_id: id})
-        .then(result => {
-            if (result.deletedCount === 1) {
-                return true;
-            } else {
-                return false;
-            }
-        })
+        return collection.deleteOne({_id: id});
     }
-
+    // Erstellen eines neuen ToDos (POST)
     insert(todo) {
-        return collection.insertOne(todo)
-        .then(result => {
-            todo._id = result.insertedId;
-            return todo;
-        })
+        return collection.insertOne(todo);
     }
 }

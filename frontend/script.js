@@ -1,6 +1,6 @@
 let TODOS;
 const url = 'http://localhost:3000/todos';
-const status = ['done', 'doing', 'open'];
+const status = ['Fertig', 'In Arbeit', 'Offen'];
     
 //document.addEventListener('DOMContentLoaded', init);
 
@@ -127,7 +127,6 @@ function editTodo(todoElement)
 async function addTodo()
 {
     const todo = {
-        id: Date.now(),
         title: document.getElementById('title').value,
         due: document.getElementById('dueDate').value,
         status: document.getElementById('state').value
