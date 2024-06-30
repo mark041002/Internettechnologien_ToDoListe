@@ -35,12 +35,12 @@ let TODOS = [
 ];
 
 // Lesen aller ToDos (GET)
-app.get('/api/todos', (req, res) => { //Ouput: Kompletter Datensatz
+app.get('/todos', (req, res) => { //Ouput: Kompletter Datensatz
     res.json(TODOS);
 });
 
 // Lesen eines einzelnen ToDos (GET)
-app.get('/api/todos/:id', (req, res) => { //Output: Einzelner Datensatz
+app.get('/todos/:id', (req, res) => { //Output: Einzelner Datensatz
     const id = parseInt(req.params.id);
     const todo = TODOS.find(todo => todo._id === id);
     if (todo) {
@@ -51,26 +51,37 @@ app.get('/api/todos/:id', (req, res) => { //Output: Einzelner Datensatz
 });
 
 // Erstellen eines neuen ToDos (POST)
-app.post('/api/todos', (req, res) => {  //Input: Neuer Datensatz
-    const newTodo = req.body;
+app.post('/todos', (req, res) => {  //Input: Neuer Datensatz
+    const newTodo = {
+        _id: Date.now(),
+        title: req.body.title,
+        due: req.body.due,
+        status: req.body.status
+    }
     TODOS.push(newTodo);
     res.status(201).json(newTodo);
 });
 
 // Aktualisieren eines ToDos (PUT)
-app.put('/api/todos/:id', (req, res) => { // Update eines Datensatzes
+app.put('/todos/:id', (req, res) => { // Update eines Datensatzes
     const id = parseInt(req.params.id);
-    const updatedTodo = req.body;
     const index = TODOS.findIndex(todo => todo._id === id);
     if (index !== -1) {
+        const updatedTodo = {
+            _id: id,
+            title: req.body.title,
+            due: req.body.due,
+            status: req.body.status
+        }
         TODOS[index] = updatedTodo;
+        res.json(TODOS[index]);
     } else {
         res.status(404).send();
     }
 });
 
 // Löschen eines ToDos (DELETE)
-app.delete('/api/todos/:id', (req, res) => { //Löschen eines Datensatzes
+app.delete('/todos/:id', (req, res) => { //Löschen eines Datensatzes
     const id = parseInt(req.params.id);
     const index = TODOS.findIndex(todo => todo._id === id);
     if (index !== -1) {
